@@ -1,3 +1,8 @@
+/*
+
+
+
+j*/
 #include<stdio.h>
 #include<stdlib.h>
 #include<stdbool.h>
@@ -32,29 +37,32 @@ Process* insert(Process* head,int i){
     }
     return head;
 }
-void runTimeSharing(Process *head) {
+void runTimeSharing(Process *head,int n) {
   Process *curr = head;
   int elapsedTime = 0;
-  while (true) {
-    if (curr->remainingTime <= TIME_SLOT) {
-      elapsedTime += curr->remainingTime;
-      printf("Process %d completed in %dns\n", curr->id, elapsedTime);
-      Process *temp = curr;
-      curr = curr->next;
-      if (curr == head) {
-        break;
-      }
-      temp->next = NULL;
-      free(temp);
-    } else {
-      elapsedTime += TIME_SLOT;
-      curr->remainingTime -= TIME_SLOT;
-      curr = curr->next;
+  while (n) {
+        while (n){
+        if(head->remainingTime!=-1){
+            if(head->remainingTime>=TIME_SLOT){
+                head->remainingTime -= TIME_SLOT;
+                elapsedTime += TIME_SLOT;
+            }else{
+                elapsedTime+=head->remainingTime;
+                head->remainingTime=0;
+            }
+
+            if (head->remainingTime == 0){
+                printf("Process %d completed after: %dns\n", head->id, elapsedTime);
+                head->remainingTime=-1;
+                n--;
+            }
+        }
+        head=head->next;
     }
+    printf("Total time taken: %dns\n",elapsedTime);
   }
 }
-
-void main(){
+int main(){
     Process* head=NULL;
     int n;
     printf("Enter number of processess:");
@@ -62,5 +70,8 @@ void main(){
     for(int i=0;i<n;i++){
         head=insert(head,i+1);
     }
-    runTimeSharing(head);    
+    printf("CPU time:- 10ns\n\n");
+    runTimeSharing(head,n);    
+
+    return 0;
 }
